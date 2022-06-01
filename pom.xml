@@ -15,6 +15,7 @@
         <module>mall-order</module>
         <module>mall-product</module>
         <module>mall-coupon</module>
+        <module>renren-fast-master</module>
     </modules>
 
 </project>

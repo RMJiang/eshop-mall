@@ -14,6 +14,5 @@ buildNumber.properties
 **/mvnw.cmd
 **/.mvn
 **/.gitignore
-
 **/target
 .idea
