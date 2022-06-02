@@ -3,8 +3,11 @@ package com.eshop.mall.order.controller;
 import com.eshop.common.utils.PageUtils;
 import com.eshop.common.utils.R;
 import com.eshop.mall.order.entity.OrderEntity;
+import com.eshop.mall.order.fegin.ProductService;
 import com.eshop.mall.order.service.OrderService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Arrays;
@@ -19,11 +22,32 @@ import java.util.Map;
  * @email ${email}
  * @date 2022-06-02 12:33:03
  */
+@RefreshScope
 @RestController
 @RequestMapping("order/order")
 public class OrderController {
     @Autowired
     private OrderService orderService;
+
+    @Autowired
+    ProductService productService;
+
+    @GetMapping("/products")
+    public R queryProduct(){
+        // OpenFegin 远程调用服务
+        return R.ok().put("products",productService.queryAllBrand());
+    }
+
+    @Value("${user.userName}")
+    private String username;
+
+    @Value("${user.age}")
+    private Integer age;
+
+    @GetMapping("/users")
+    public R queryUser(){
+        return R.ok().put("userName", username).put("age",age);
+    }
 
     /**
      * 列表
