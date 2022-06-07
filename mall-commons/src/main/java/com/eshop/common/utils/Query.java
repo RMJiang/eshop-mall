@@ -16,7 +16,6 @@ import org.apache.commons.lang.StringUtils;
 
 import java.util.Map;
 
-
 /**
  * 查询参数
  *
