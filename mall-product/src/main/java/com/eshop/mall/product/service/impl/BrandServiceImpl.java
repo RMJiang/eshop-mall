@@ -11,6 +11,7 @@ import com.eshop.mall.product.service.BrandService;
 import com.eshop.mall.product.service.CategoryBrandRelationService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
 
 import java.util.Map;
@@ -41,6 +42,7 @@ public class BrandServiceImpl extends ServiceImpl<BrandDao, BrandEntity> impleme
      * 更新品牌信息 并关联其他
      * @param brand
      */
+    @Transactional
     @Override
     public void updateDetail(BrandEntity brand) {
         //1.更新原始数据

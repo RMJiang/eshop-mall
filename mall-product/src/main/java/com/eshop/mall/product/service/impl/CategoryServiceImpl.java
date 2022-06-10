@@ -11,6 +11,7 @@ import com.eshop.mall.product.service.CategoryBrandRelationService;
 import com.eshop.mall.product.service.CategoryService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
 
 import java.util.ArrayList;
@@ -123,6 +124,11 @@ public class CategoryServiceImpl extends ServiceImpl<CategoryDao, CategoryEntity
         return paths;
     }
 
+    /**
+     * 更新类别名称 且同步更新级联数据
+     * @param category
+     */
+    @Transactional
     @Override
     public void updateDetail(CategoryEntity category) {
         //更新类别名称
