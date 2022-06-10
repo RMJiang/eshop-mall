@@ -7,9 +7,14 @@ import com.eshop.common.utils.PageUtils;
 import com.eshop.common.utils.Query;
 import com.eshop.mall.product.dao.CategoryDao;
 import com.eshop.mall.product.entity.CategoryEntity;
+import com.eshop.mall.product.service.CategoryBrandRelationService;
 import com.eshop.mall.product.service.CategoryService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.util.StringUtils;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -17,6 +22,9 @@ import java.util.stream.Collectors;
 
 @Service("categoryService")
 public class CategoryServiceImpl extends ServiceImpl<CategoryDao, CategoryEntity> implements CategoryService {
+
+    @Autowired
+    CategoryBrandRelationService categoryBrandRelationService;
 
     @Override
     public PageUtils queryPage(Map<String, Object> params) {
@@ -85,4 +93,46 @@ public class CategoryServiceImpl extends ServiceImpl<CategoryDao, CategoryEntity
         //批量逻辑删除操作
         baseMapper.deleteBatchIds(ids);
     }
+
+    /**
+     * 根据类别编号查询出对应的父组件
+     * @param catelogId
+     * @return
+     */
+    @Override
+    public Long[] findCatelogPath(Long catelogId) {
+        List<Long> paths = new ArrayList<>();
+        List<Long> parentPath = findParentPath(catelogId, paths);
+        Collections.reverse(parentPath);
+        return parentPath.toArray(new Long[parentPath.size()]);
+    }
+
+    /**
+     * 根据类别编号查询出对应的父组件
+     * 225 22 2
+     * @param catelogId
+     * @param paths
+     * @return
+     */
+    private List<Long> findParentPath(Long catelogId, List<Long> paths) {
+        paths.add(catelogId);
+        CategoryEntity entity = this.getById(catelogId);
+        if(entity.getParentCid() != 0){
+            findParentPath(entity.getParentCid(),paths);
+        }
+        return paths;
+    }
+
+    @Override
+    public void updateDetail(CategoryEntity category) {
+        //更新类别名称
+        this.updateById(category);
+        if (!StringUtils.isEmpty(category.getName())){
+            //同步更新级联数据
+            categoryBrandRelationService.updateCatelogName(category.getCatId(),category.getName());
+
+            //TODO 同步更新其他冗余数据
+        }
+    }
+
 }

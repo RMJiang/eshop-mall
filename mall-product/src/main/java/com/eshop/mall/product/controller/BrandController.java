@@ -92,8 +92,8 @@ public class BrandController {
     @RequestMapping("/update")
     //@RequiresPermissions("product:brand:update")
     public R update(@Validated(UpdateGroupsInterface.class) @RequestBody BrandEntity brand){
-		brandService.updateById(brand);
-
+		//brandService.updateById(brand);
+        brandService.updateDetail(brand);
         return R.ok();
     }
 
@@ -108,11 +108,11 @@ public class BrandController {
         return R.ok();
     }
 
-//    @GetMapping("/all")
-//    public R queryAllBrand(){
-//        BrandEntity brandEntity = new BrandEntity();
-//        brandEntity.setName("华为");
-//        return R.ok().put("brands",brandEntity);
-//    }
+    @GetMapping("/all")
+    public R queryAllBrand(){
+        BrandEntity brandEntity = new BrandEntity();
+        brandEntity.setName("华为");
+        return R.ok().put("brands",brandEntity);
+    }
 
 }

@@ -1,11 +1,11 @@
 package com.eshop.mall.product.entity;
 
+import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
+import lombok.Data;
 
 import java.io.Serializable;
-import java.util.Date;
-import lombok.Data;
 
 /**
  * 属性分组
@@ -44,5 +44,12 @@ public class AttrGroupEntity implements Serializable {
 	 * 所属分类id
 	 */
 	private Long catelogId;
+
+	/**
+	 * 修改数据时记录类别信息
+	 * [2,22,225]
+	 */
+	@TableField(exist = false)
+	private Long[] catelogPath;
 
 }
