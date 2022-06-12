@@ -1,19 +1,15 @@
 package com.eshop.mall.coupon.controller;
 
-import java.util.Arrays;
-import java.util.Map;
-
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
-
-import com.eshop.mall.coupon.entity.SkuFullReductionEntity;
-import com.eshop.mall.coupon.service.SkuFullReductionService;
+import com.eshop.common.dto.SkuReductionDTO;
 import com.eshop.common.utils.PageUtils;
 import com.eshop.common.utils.R;
+import com.eshop.mall.coupon.entity.SkuFullReductionEntity;
+import com.eshop.mall.coupon.service.SkuFullReductionService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.Arrays;
+import java.util.Map;
 
 
 
@@ -83,6 +79,12 @@ public class SkuFullReductionController {
     public R delete(@RequestBody Long[] ids){
 		skuFullReductionService.removeByIds(Arrays.asList(ids));
 
+        return R.ok();
+    }
+
+    @PostMapping("/saveinfo")
+    public R saveFullReductionInfo(@RequestBody SkuReductionDTO dto){
+        skuFullReductionService.saveSkuReduction(dto);
         return R.ok();
     }
 
