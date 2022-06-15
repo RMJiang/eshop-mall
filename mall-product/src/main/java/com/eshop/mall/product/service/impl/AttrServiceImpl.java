@@ -294,4 +294,18 @@ public class AttrServiceImpl extends ServiceImpl<AttrDao, AttrEntity> implements
         return new PageUtils(page);
     }
 
+    /**
+     * 查询出所有的可以检索的对应的规格参数编号
+     * @param attrIds
+     * @return
+     */
+    @Override
+    public List<Long> selectSearchAttrIds(List<Long> attrIds) {
+        List<AttrEntity> list = this.list(new QueryWrapper<AttrEntity>().in("attr_id", attrIds)
+                .eq("search_type", 1));
+        return list.stream().map(item->{
+            return item.getAttrId();
+        }).collect(Collectors.toList());
+    }
+
 }

@@ -82,4 +82,20 @@ public class SpuInfoController {
         return R.ok();
     }
 
+    /**
+     * 商品上架功能
+     * 传递过来spuId
+     * 根据spuId查询需要存储在es中的数据并存储
+     * 之后修改商品状态为上架
+     * @param spuId
+     * @return
+     */
+    @PostMapping ("/{spuId}/up")
+    //@RequiresPermissions("product:spuinfo:up")
+    public R spuUp(@PathVariable("spuId") Long spuId){
+        //PageUtils page = spuInfoService.queryPage(params);
+        spuInfoService.up(spuId);
+        return R.ok();
+    }
+
 }

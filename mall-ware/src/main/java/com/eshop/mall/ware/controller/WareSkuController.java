@@ -1,19 +1,16 @@
 package com.eshop.mall.ware.controller;
 
-import java.util.Arrays;
-import java.util.Map;
-
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
-
-import com.eshop.mall.ware.entity.WareSkuEntity;
-import com.eshop.mall.ware.service.WareSkuService;
+import com.eshop.common.dto.SkuHasStockDto;
 import com.eshop.common.utils.PageUtils;
 import com.eshop.common.utils.R;
+import com.eshop.mall.ware.entity.WareSkuEntity;
+import com.eshop.mall.ware.service.WareSkuService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.Arrays;
+import java.util.List;
+import java.util.Map;
 
 
 
@@ -84,6 +81,18 @@ public class WareSkuController {
 		wareSkuService.removeByIds(Arrays.asList(ids));
 
         return R.ok();
+    }
+
+    /**
+     * 查询对应的skuid是否有库存
+     * @param skuIds
+     * @return
+     */
+    @PostMapping("/hasStock")
+    public List<SkuHasStockDto> getSkusHasStock(@RequestBody List<Long> skuIds){
+        List<SkuHasStockDto> list = wareSkuService.getSkusHasStock(skuIds);
+
+        return list;
     }
 
 }

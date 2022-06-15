@@ -1,19 +1,17 @@
 package com.eshop.mall.ware.controller;
 
-import java.util.Arrays;
-import java.util.Map;
-
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
-
-import com.eshop.mall.ware.entity.PurchaseEntity;
-import com.eshop.mall.ware.service.PurchaseService;
 import com.eshop.common.utils.PageUtils;
 import com.eshop.common.utils.R;
+import com.eshop.mall.ware.entity.PurchaseEntity;
+import com.eshop.mall.ware.service.PurchaseService;
+import com.eshop.mall.ware.vo.MergeVO;
+import com.eshop.mall.ware.vo.PurchaseDoneVO;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.Arrays;
+import java.util.List;
+import java.util.Map;
 
 
 
@@ -83,6 +81,66 @@ public class PurchaseController {
     public R delete(@RequestBody Long[] ids){
 		purchaseService.removeByIds(Arrays.asList(ids));
 
+        return R.ok();
+    }
+
+    /**
+     * 查询采购单
+     * //purchase/unreceive/list?t=1655092653556
+     * @param params
+     * @return
+     */
+    @RequestMapping("/unreceive/list")
+    //@RequiresPermissions("ware:purchase:list")
+    public R listUnreceive(@RequestParam Map<String, Object> params){
+        PageUtils page = purchaseService.queryPageUnreceive(params);
+
+        return R.ok().put("page", page);
+    }
+
+    /**
+     * 整合订单
+     * @param mergeVO
+     * @return
+     */
+    @RequestMapping("/merge")
+    //@RequiresPermissions("ware:purchase:list")
+    public R merge(@RequestBody MergeVO mergeVO){
+        Integer flag = purchaseService.merge(mergeVO);
+        if(flag == -1){
+            return R.error("合并失败...该采购单不能被合并!");
+        }
+        return R.ok();
+    }
+
+
+
+    /**
+     * 领取采购单
+     * [2,3,4]
+     * @return
+     */
+    @PostMapping("/receive")
+    public R receive(@RequestBody List<Long> ids){
+        purchaseService.received(ids);
+        return R.ok();
+    }
+
+    /**
+     * 完成采购
+     * {
+     *     id:1 采购单
+     *     items:[
+     *      {itemId:1,status:3,reason:"xxxx"},
+     *      {itemId:2,status:3,reason:"xxxx"},
+     *      {itemId:3,status:4,reason:"xxxx"}
+     *     ] 具体采购项
+     * }
+     * @return
+     */
+    @PostMapping("/done")
+    public R done(@RequestBody PurchaseDoneVO vo){
+        purchaseService.done(vo);
         return R.ok();
     }
 
