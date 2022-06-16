@@ -16,5 +16,8 @@
         <result property="productCount" column="product_count"/>
     </resultMap>
 
+    <select id="queryLevelCategory" resultType="com.eshop.mall.product.entity.CategoryEntity">
+        SELECT * from pms_category where parent_cid = 0
+    </select>
 
 </mapper>
