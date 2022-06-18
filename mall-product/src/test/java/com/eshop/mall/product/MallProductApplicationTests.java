@@ -5,10 +5,14 @@ import com.eshop.mall.product.entity.BrandEntity;
 import com.eshop.mall.product.service.BrandService;
 import com.eshop.mall.product.service.CategoryService;
 import org.junit.jupiter.api.Test;
+import org.redisson.api.RedissonClient;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.data.redis.core.StringRedisTemplate;
+import org.springframework.data.redis.core.ValueOperations;
 
 import java.util.List;
+import java.util.UUID;
 
 @SpringBootTest(classes = MallProductApplication.class)
 class MallProductApplicationTests {
@@ -18,6 +22,12 @@ class MallProductApplicationTests {
 
     @Autowired
     private CategoryService categoryService;
+
+    @Autowired
+    private StringRedisTemplate stringRedisTemplate;
+
+    @Autowired
+    private RedissonClient redissonClient;
 
     @Test
     void contextLoads() {
@@ -49,6 +59,18 @@ class MallProductApplicationTests {
         for (Long aLong : catelogPath) {
             System.out.println(aLong);
         }
+    }
+
+    @Test
+    public void testStringRedisTemplate(){
+        ValueOperations<String, String> ops = stringRedisTemplate.opsForValue();
+        ops.set("name",""+ UUID.randomUUID());
+        System.out.println("redis value "+ops.get("name"));
+    }
+
+    @Test
+    public void testRedissionClient(){
+        System.out.println("redissonClient: "+redissonClient);
     }
 
 }
