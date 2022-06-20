@@ -9,6 +9,7 @@ import java.util.List;
  * @Author ruomengjiang
  * @Date 2022/6/14
  * @Description : eshop-mall
+ * 商品上架时候需要保存到ES中的信息
  * @Version: 1.0
  */
 @Data

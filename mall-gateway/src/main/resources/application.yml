@@ -44,3 +44,7 @@ spring:
           uri: lb://mall-product
           predicates:
             - Host=eshop.mall.com
+        - id: eshopmall_host_route
+          uri: lb://mall-search
+          predicates:
+            - Host=eshop.search.com
