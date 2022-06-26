@@ -25,7 +25,7 @@ public class SearchController {
      * @param param
      * @return
      */
-    @GetMapping(value = {"/list.html","/","/index.html"})
+    @GetMapping(value = {"/list.html","/","/index.html","/search.html"})
     public String listPage(SearchParam param, Model model){
 
         // 通过对应的Service根据传递过来的相关的信息去ES中检索对应的数据

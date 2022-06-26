@@ -1,7 +1,5 @@
 package com.eshop.mall.search.service.impl;
 
-import com.alibaba.fastjson.JSON;
-import com.eshop.common.dto.es.SkuESModel;
 import com.eshop.mall.search.config.MallElasticSearchConfiguration;
 import com.eshop.mall.search.constant.ESConstant;
 import com.eshop.mall.search.service.MallSearchService;
@@ -15,27 +13,15 @@ import org.elasticsearch.index.query.BoolQueryBuilder;
 import org.elasticsearch.index.query.NestedQueryBuilder;
 import org.elasticsearch.index.query.QueryBuilders;
 import org.elasticsearch.index.query.RangeQueryBuilder;
-import org.elasticsearch.search.SearchHit;
-import org.elasticsearch.search.SearchHits;
 import org.elasticsearch.search.aggregations.AggregationBuilders;
-import org.elasticsearch.search.aggregations.Aggregations;
 import org.elasticsearch.search.aggregations.bucket.nested.NestedAggregationBuilder;
-import org.elasticsearch.search.aggregations.bucket.nested.ParsedNested;
-import org.elasticsearch.search.aggregations.bucket.terms.ParsedLongTerms;
-import org.elasticsearch.search.aggregations.bucket.terms.ParsedStringTerms;
-import org.elasticsearch.search.aggregations.bucket.terms.Terms;
 import org.elasticsearch.search.aggregations.bucket.terms.TermsAggregationBuilder;
 import org.elasticsearch.search.builder.SearchSourceBuilder;
 import org.elasticsearch.search.fetch.subphase.highlight.HighlightBuilder;
-import org.elasticsearch.search.fetch.subphase.highlight.HighlightField;
 import org.elasticsearch.search.sort.SortOrder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
-
-import java.util.ArrayList;
-import java.util.List;
-import java.util.stream.Collectors;
 
 /**
  * @Author ruomengjiang
@@ -125,14 +111,14 @@ public class MallSearchServiceImpl implements MallSearchService {
         if(param.getAttrs() != null && param.getAttrs().size() > 0){
             for (String attrStr : param.getAttrs()) {
                 BoolQueryBuilder boolNestedQuery = QueryBuilders.boolQuery();
-                // attrs=19_64GB:32GB 我们首先需要根据 _ 做分割
+                // attrs=19_64GB:32GB 需要根据 _ 做分割
                 String[] attrStrArray = attrStr.split("_");
                 // 属性的编号
                 String attrId = attrStrArray[0];
                 // 64GB:32GB  获取属性的值
                 String[] values = attrStrArray[1].split(":");
                 // 拼接组合条件
-                boolNestedQuery.must(QueryBuilders.termQuery("attrs.attrId",attrId));
+                boolNestedQuery.must(QueryBuilders.termQuery("attrs.attrId", attrId));
                 boolNestedQuery.must(QueryBuilders.termsQuery("attrs.attrValue",values));
 
                 NestedQueryBuilder nestedQuery = QueryBuilders.nestedQuery("attrs", boolNestedQuery, ScoreMode.None);
@@ -145,7 +131,7 @@ public class MallSearchServiceImpl implements MallSearchService {
         if(!StringUtils.isEmpty(param.getSort())){
             // sort=salaCount_asc/desc
             String[] s = param.getSort().split("_");
-            SortOrder order = s[1].equalsIgnoreCase("asc")?SortOrder.ASC:SortOrder.DESC;
+            SortOrder order = s[1].equalsIgnoreCase("asc")? SortOrder.ASC:SortOrder.DESC;
             sourceBuilder.sort(s[0], order);
         }
         // 3.处理分页
@@ -161,7 +147,7 @@ public class MallSearchServiceImpl implements MallSearchService {
 
         // 4. 设置高亮
         if(!StringUtils.isEmpty(param.getKeyword())){
-            // 如果有根据关键字查询那么我们才需要高亮设置
+            // 如有根据关键字查询 需要高亮设置
             HighlightBuilder highlightBuilder = new HighlightBuilder();
             highlightBuilder.field("subTitle");
             highlightBuilder.preTags("<b style='color:red'>");
@@ -171,20 +157,21 @@ public class MallSearchServiceImpl implements MallSearchService {
 
         // 5.聚合运算
         // 5.1 品牌的聚合
+
         TermsAggregationBuilder brand_agg = AggregationBuilders.terms("brand_agg");
         brand_agg.field("brandId");
         brand_agg.size(50);
         // 品牌的子聚合
-        brand_agg.subAggregation(AggregationBuilders.terms("brand_name_agg").field("brandName").size(10));
-        brand_agg.subAggregation(AggregationBuilders.terms("brand_img_agg").field("brandImg").size(10));
+        brand_agg.subAggregation(AggregationBuilders.terms("brand_name_agg").field("brandName.keyword").size(10));
+        brand_agg.subAggregation(AggregationBuilders.terms("brand_img_agg").field("brandImg.keyword").size(10));
         sourceBuilder.aggregation(brand_agg);
 
         // 5.2 类别的聚合
         TermsAggregationBuilder catalog_agg = AggregationBuilders.terms("catalog_agg");
-        catalog_agg.field("catalogId");
+        catalog_agg.field("catalogId.keyword");
         catalog_agg.size(10);
         // 类别的子聚合
-        catalog_agg.subAggregation(AggregationBuilders.terms("catalog_name_agg").field("catalogName").size(10));
+        catalog_agg.subAggregation(AggregationBuilders.terms("catalog_name_agg").field("catalogName.keyword").size(10));
         sourceBuilder.aggregation(catalog_agg);
 
         // 5.3 属性的聚合
@@ -199,6 +186,7 @@ public class MallSearchServiceImpl implements MallSearchService {
         attr_agg.subAggregation(attr_id_agg);
         sourceBuilder.aggregation(attr_agg);
 
+
         System.out.println(sourceBuilder.toString());
         searchRequest.source(sourceBuilder);
 
@@ -210,7 +198,7 @@ public class MallSearchServiceImpl implements MallSearchService {
      * @param response
      * @return
      */
-    private SearchResult buildSearchResult(SearchResponse response,SearchParam param){
+    private SearchResult buildSearchResult(SearchResponse response,SearchParam param){/**
         SearchResult result = new SearchResult();
         SearchHits hits = response.getHits();
         // 1.检索的所有商品信息
@@ -222,7 +210,7 @@ public class MallSearchServiceImpl implements MallSearchService {
                 // 把json格式的字符串通过fastjson转换为SkuESModel对象
                 SkuESModel model = JSON.parseObject(sourceAsString, SkuESModel.class);
                 if(!StringUtils.isEmpty(param.getKeyword())){
-                    // 我们需要设置高亮
+                    // 设置高亮
                     HighlightField subTitle = product.getHighlightFields().get("subTitle");
                     String subTitleHighlight = subTitle.getFragments()[0].string();
                     model.setSubTitle(subTitleHighlight); // 设置高亮
@@ -243,7 +231,7 @@ public class MallSearchServiceImpl implements MallSearchService {
                 // 获取品牌的key
                 String keyAsString = bucket.getKeyAsString();
                 brandVO.setBrandId(Long.parseLong(keyAsString)); // 设置品牌的编号
-                // 然后我们需要获取品牌的名称和图片的地址
+                // 获取品牌的名称和图片的地址
                 ParsedStringTerms brand_img_agg = bucket.getAggregations().get("brand_img_agg");
                 List<? extends Terms.Bucket> bucketsImg = brand_img_agg.getBuckets();
                 if(bucketsImg != null && bucketsImg.size() > 0){
@@ -316,6 +304,7 @@ public class MallSearchServiceImpl implements MallSearchService {
             navs.add(i);
         }
         result.setNavs(navs);
-        return result;
+        return result;*/
+        return null;
     }
 }

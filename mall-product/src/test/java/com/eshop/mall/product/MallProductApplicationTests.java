@@ -2,8 +2,12 @@ package com.eshop.mall.product;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.eshop.mall.product.entity.BrandEntity;
+import com.eshop.mall.product.service.AttrGroupService;
 import com.eshop.mall.product.service.BrandService;
 import com.eshop.mall.product.service.CategoryService;
+import com.eshop.mall.product.service.SkuSaleAttrValueService;
+import com.eshop.mall.product.vo.SkuItemSaleAttrVo;
+import com.eshop.mall.product.vo.SpuItemGroupAttrVo;
 import org.junit.jupiter.api.Test;
 import org.redisson.api.RedissonClient;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,6 +32,12 @@ class MallProductApplicationTests {
 
     @Autowired
     private RedissonClient redissonClient;
+
+    @Autowired
+    private AttrGroupService attrGroupService;
+
+    @Autowired
+    private SkuSaleAttrValueService skuSaleAttrValueService;
 
     @Test
     void contextLoads() {
@@ -72,5 +82,24 @@ class MallProductApplicationTests {
     public void testRedissionClient(){
         System.out.println("redissonClient: "+redissonClient);
     }
+
+    @Test
+    public void testItem(){
+        List<SpuItemGroupAttrVo> attrgroupWithSpuId = attrGroupService
+                .getAttrgroupWithSpuId(4l, 225l);
+
+        for (SpuItemGroupAttrVo spuItemGroupAttrVo : attrgroupWithSpuId) {
+            System.out.println(spuItemGroupAttrVo);
+        }
+    }
+
+    @Test
+    public void testItemSaleAttrs(){
+        List<SkuItemSaleAttrVo> skuItemSaleAttrVos = skuSaleAttrValueService.getSkuSaleAttrValueBySpuId(4l);
+        for (SkuItemSaleAttrVo skuItemSaleAttrVo : skuItemSaleAttrVos) {
+            System.out.println(skuItemSaleAttrVo);
+        }
+    }
+
 
 }

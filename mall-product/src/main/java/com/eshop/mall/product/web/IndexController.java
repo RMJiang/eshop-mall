@@ -21,6 +21,7 @@ import java.util.UUID;
  * @Author ruomengjiang
  * @Date 2022/6/15
  * @Description : eshop-mall
+ * 商城主页
  * @Version: 1.0
  */
 @Controller
@@ -35,7 +36,7 @@ public class IndexController {
     @Autowired
     private StringRedisTemplate stringRedisTemplate;
 
-    @GetMapping({"/","/home","/index","/index.html","/home.html"})
+    @GetMapping({"/","/home","/index"})
     public String index(Model model){
         List<CategoryEntity> list = categoryService.getLeve1Category();
         model.addAttribute("categorys",list);

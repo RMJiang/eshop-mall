@@ -11,6 +11,7 @@ import com.eshop.mall.product.entity.AttrGroupEntity;
 import com.eshop.mall.product.service.AttrGroupService;
 import com.eshop.mall.product.service.AttrService;
 import com.eshop.mall.product.vo.AttrGroupWithAttrsVo;
+import com.eshop.mall.product.vo.SpuItemGroupAttrVo;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -26,6 +27,9 @@ public class AttrGroupServiceImpl extends ServiceImpl<AttrGroupDao, AttrGroupEnt
 
     @Autowired
     AttrService attrService;
+
+    @Autowired
+    AttrGroupDao attrGroupDao;
 
     @Override
     public PageUtils queryPage(Map<String, Object> params) {
@@ -86,6 +90,18 @@ public class AttrGroupServiceImpl extends ServiceImpl<AttrGroupDao, AttrGroupEnt
             return vo;
         }).collect(Collectors.toList());
         return list;
+    }
+
+    /**
+     * 根据spuid和catalogid查询出对应的属性组及其属性信息
+     * @param spuId
+     * @param catalogId
+     * @return
+     */
+    @Override
+    public List<SpuItemGroupAttrVo> getAttrgroupWithSpuId(Long spuId, Long catalogId) {
+        List<SpuItemGroupAttrVo> groupAttrVos = attrGroupDao.getAttrgroupWithSpuId(spuId,catalogId);
+        return groupAttrVos;
     }
 
 }
