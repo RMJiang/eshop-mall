@@ -56,8 +56,8 @@
 					</li>
 				</ul>
 				<ul class="header_ul_right">
-					<li style="border: 0;"><a href="http://eshop.auth.com/login.html" class="aa">[[${session.loginUser!=null?session.loginUser.nickname:'你好，请登录'}]]</a></li>
-					<li><a href="http://auth.eshop.com/reg.html" style="color: red;">免费注册</a> |</li>
+					<li style="border: 0;"><a href="http://auth.eshop.com/login.html" class="aa">[[${session.loginUser!=null?session.loginUser.nickname:'你好，请登录'}]]</a></li>
+					<li><a href="http://eshop.auth.com/reg.html" style="color: red;">免费注册</a> |</li>
 					<li><a href="javascript:;" class="aa">我的订单</a> |</li>
 					<li class="jingdong"><a href="javascript:;">我的谷粒</a><span class="glyphicon glyphicon-menu-down">|</span>
 						<ol class="jingdong_ol">
@@ -68,7 +68,7 @@
 							<li><a href="javascript:;">降价商品</a></li>
 							<li><a href="javascript:;">我的关注</a></li>
 							<li style="width: 100%;height: 1px;background: lavender;margin-top: 15px;"></li>
-							<li style="margin-top: 0;"><a href="javascript:;">我的京豆</a></li>
+							<li style="margin-top: 0;"><a href="javascript:;">我的谷粒豆</a></li>
 							<li style="margin-top: 0;"><a href="javascript:;">我的优惠券</a></li>
 							<li style="margin-bottom: 10px;"><a href="javascript:;">我的白条</a></li>
 
@@ -250,7 +250,7 @@
 			<nav>
 			<div class="nav_min">
 				<div class="nav_top">
-					<div class="nav_top_one"><a href="#"><img src="/static/item/img/111.png"/></a></div>
+					<div class="nav_top_one"><a href="http://mall.eshop.com"><img src="/static/item/image/logo1.jpg"/></a></div>
 					<div class="nav_top_two"><input type="text"/><button>搜索</button></div>
 					<div class="nav_top_three"><a href="../JD_Shop/One_JDshop.html">我的购物车</a><span class="glyphicon glyphicon-shopping-cart"></span>
 						<div class="nav_top_three_1">
@@ -378,7 +378,7 @@
 
 							<span class="contact-sp">
 								<span class="contact-sp1">
-								JD
+								GL
 							</span>
 							<span class="contact-sp2">
 								自营
@@ -606,7 +606,7 @@
 
 						<div class="box-btns clear">
 							<div class="box-btns-one">
-								<input type="text" name="" id="" value="1" />
+								<input type="text" name="" id="numInput" value="1" />
 								<div class="box-btns-one1">
 
 									<div>
@@ -623,8 +623,8 @@
 								</div>
 							</div>
 							<div class="box-btns-two">
-								<a href="../商品分类\index.html">
-									立即预约
+								<a href="#" id="addCart" th:attr="skuId=${item.info.skuId}">
+									加入购物车
 								</a>
 							</div>
 							<div class="box-btns-three">
@@ -1237,6 +1237,11 @@
 	<script src="/static/item/js/jquery1.9.js" type="text/javascript" charset="utf-8"></script>
 	<script src="/static/item/js/js.js" type="text/javascript" charset="utf-8"></script>
 	<script type="text/javascript">
+		$("#addCart").click(function(){
+			var num = $("#numInput").val();
+			var skuId = $(this).attr("skuId");
+			location.href="http://cart.eshop.com/addCart?skuId="+skuId+"&num="+num;
+		})
 	</script>
 
 </html>

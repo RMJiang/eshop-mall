@@ -282,7 +282,7 @@ public class CategoryServiceImpl extends ServiceImpl<CategoryDao, CategoryEntity
         List<CategoryEntity> list = baseMapper.selectList(new QueryWrapper<CategoryEntity>());
         // 获取所有的一级分类的数据
         List<CategoryEntity> leve1Category = this.queryByParenCid(list,0l);
-        // 把一级分类的数据转换为Map容器 key就是一级分类的编号， value就是一级分类对应的二级分类的数据
+        // 把一级分类的数据转换为Map key就是一级分类的编号， value就是一级分类对应的二级分类的数据
         Map<String, List<Catalog2VO>> map = leve1Category.stream().collect(Collectors.toMap(
                 key -> key.getCatId().toString()
                 , value -> {

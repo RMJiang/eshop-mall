@@ -43,6 +43,9 @@ public class SkuInfoServiceImpl extends ServiceImpl<SkuInfoDao, SkuInfoEntity> i
     @Autowired
     ThreadPoolExecutor threadPoolExecutor;
 
+    @Autowired
+    SkuInfoDao skuInfoDao;
+
     @Override
     public PageUtils queryPage(Map<String, Object> params) {
         IPage<SkuInfoEntity> page = this.page(
@@ -160,6 +163,11 @@ public class SkuInfoServiceImpl extends ServiceImpl<SkuInfoDao, SkuInfoEntity> i
         CompletableFuture.allOf(saleFuture,spuFuture,imageFuture,groupFuture).get();
         return vo;
 
+    }
+
+    @Override
+    public List<String> getSkuSaleAttrs(Long skuId) {
+        return this.skuInfoDao.getSkuSaleAttrs(skuId);
     }
 
 }

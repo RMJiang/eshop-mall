@@ -1,5 +1,6 @@
 package com.eshop.mall.product.controller;
 
+import com.alibaba.fastjson.JSON;
 import com.eshop.common.utils.PageUtils;
 import com.eshop.common.utils.R;
 import com.eshop.mall.product.entity.SkuInfoEntity;
@@ -8,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Arrays;
+import java.util.List;
 import java.util.Map;
 
 
@@ -44,8 +46,13 @@ public class SkuInfoController {
     //@RequiresPermissions("product:skuinfo:info")
     public R info(@PathVariable("skuId") Long skuId){
 		SkuInfoEntity skuInfo = skuInfoService.getById(skuId);
+        return R.ok().put("skuInfo", skuInfo).put("skuInfoJSON", JSON.toJSONString(skuInfo));
+    }
 
-        return R.ok().put("skuInfo", skuInfo);
+    @GetMapping("/saleAttrs/{skuId}")
+    public List<String> getSkuSaleAttrs(@PathVariable("skuId") Long skuId){
+        List<String> list = skuInfoService.getSkuSaleAttrs(skuId);
+        return list;
     }
 
     /**
