@@ -43,12 +43,20 @@ spring:
         - id: eshopmall_host_route1
           uri: lb://mall-product
           predicates:
-            - Host=eshop.mall.com
+            - Host=mall.eshop.com
         - id: eshopmall_host_route2
           uri: lb://mall-product
           predicates:
-            - Host=eshop.item.com
+            - Host=item.eshop.com
         - id: eshopmall_host_route3
           uri: lb://mall-search
           predicates:
-            - Host=eshop.search.com
+            - Host=search.eshop.com
+        - id: eshopmall_host_route4
+          uri: lb://mall-auth
+          predicates:
+            - Host=auth.eshop.com
+        - id: eshopmall_host_route5
+          uri: lb://mall-cart
+          predicates:
+            - Host=cart.eshop.com

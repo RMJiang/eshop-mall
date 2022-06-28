@@ -9,6 +9,11 @@ spring:
       oss:
         endpoint: oss-cn-hangzhou.aliyuncs.com
         bucket: eshopping-mall
+      sms:
+        host: https://dfsns.market.alicloudapi.com
+        path: /data/send_sms
+        method: POST
+        appCode: cd8de5a41ea84886aad973df1b844967
   application:
     name: mall-third
 

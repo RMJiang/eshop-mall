@@ -10,17 +10,19 @@
 
     <packaging>pom</packaging>
     <modules>
+        <module>renren-fast-master</module>
+        <module>renren-generator-master</module>
         <module>mall-ware</module>
         <module>mall-member</module>
         <module>mall-order</module>
         <module>mall-product</module>
         <module>mall-coupon</module>
-        <module>renren-fast-master</module>
-        <module>renren-generator-master</module>
         <module>mall-commons</module>
         <module>mall-gateway</module>
         <module>mall-third-party</module>
         <module>mall-search</module>
+        <module>mall-auth_server</module>
+        <module>mall-cart</module>
     </modules>
 
 </project>

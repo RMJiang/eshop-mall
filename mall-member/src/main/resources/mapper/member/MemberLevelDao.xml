@@ -17,5 +17,8 @@
         <result property="note" column="note"/>
     </resultMap>
 
+    <select id="queryMemberLevelDefault" resultType="com.eshop.mall.member.entity.MemberLevelEntity">
+        SELECT * FROM ums_member_level WHERE default_status = 1
+    </select>
 
 </mapper>

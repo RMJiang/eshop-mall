@@ -36,7 +36,7 @@ public class IndexController {
     @Autowired
     private StringRedisTemplate stringRedisTemplate;
 
-    @GetMapping({"/","/home","/index"})
+    @GetMapping({"/","/home","/index","/home.html","/index.html"})
     public String index(Model model){
         List<CategoryEntity> list = categoryService.getLeve1Category();
         model.addAttribute("categorys",list);

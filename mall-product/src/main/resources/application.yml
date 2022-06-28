@@ -31,6 +31,10 @@ spring:
       cache-null-values: true #是否支持缓存空值 防止缓存穿透
       #key-prefix: mall_
       use-key-prefix: true
+  session:
+    store-type: redis
+    redis:
+      namespace: spring:session
 
 mybatis-plus:
   mapper-locations: classpath*:/mapper/**/*.xml

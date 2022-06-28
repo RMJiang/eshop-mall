@@ -93,10 +93,12 @@
         </b>
         <ul>
           <li>
-            <a href="/登录页面\index.html">你好，请登录</a>
+            <a href="http://auth.eshop.com/login.html">
+              [[${session.loginUser!=null?session.loginUser.nickname:'你好，请登录'}]]
+            </a>
           </li>
           <li>
-            <a href="/注册页面\index.html" class="li_2">免费注册</a>
+            <a href="http://auth.eshop.com/reg.html" class="li_2">免费注册</a>
           </li>
           <span>|</span>
           <li>
@@ -607,7 +609,7 @@
 <script type="text/javascript">
   function search() {
       var keyword=$("#searchText").val()
-      window.location.href="http://eshop.search.com/search.html?keyword="+keyword;
+      window.location.href="http://search.eshop.com/search.html?keyword="+keyword;
   }
 
 </script>
