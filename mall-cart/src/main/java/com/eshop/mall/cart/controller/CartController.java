@@ -8,6 +8,9 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
+
+import java.util.List;
 
 /**
  * @Author ruomengjiang
@@ -21,6 +24,21 @@ public class CartController {
     @Autowired
     private ICartService cartService;
 
+    /**
+     * 获取当前登录用户选中的商品信息 购物车中
+     * @return
+     */
+    @GetMapping(value = "/getUserCartItems" )
+    @ResponseBody
+    public List<CartItem> getUserCartItems(){
+        return cartService.getUserCartItems();
+    }
+
+    /**
+     * 购物车界面
+     * @param model
+     * @return
+     */
     @GetMapping("/cart_list")
     public String queryCartList(Model model){
         Cart cart = cartService.getCartList();
@@ -28,6 +46,13 @@ public class CartController {
         return "cartList";
     }
 
+    /**
+     * 成功加入购物车
+     * @param skuId
+     * @param num
+     * @param model
+     * @return
+     */
     @GetMapping("/addCart")
     public String addCart(@RequestParam("skuId") Long skuId
             , @RequestParam("num") Integer num

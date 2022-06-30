@@ -1,10 +1,13 @@
 package com.eshop.mall.ware.controller;
 
 import com.eshop.common.dto.SkuHasStockDto;
+import com.eshop.common.exception.BizCodeEnume;
+import com.eshop.common.exception.NoStockExecption;
 import com.eshop.common.utils.PageUtils;
 import com.eshop.common.utils.R;
 import com.eshop.mall.ware.entity.WareSkuEntity;
 import com.eshop.mall.ware.service.WareSkuService;
+import com.eshop.mall.ware.vo.WareSkuLockVO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -26,6 +29,24 @@ import java.util.Map;
 public class WareSkuController {
     @Autowired
     private WareSkuService wareSkuService;
+
+    /**
+     * 订单锁定库存
+     * @param vo
+     * @return
+     */
+    @PostMapping("/lock/order")
+    public R orderLockStock(@RequestBody WareSkuLockVO vo){
+        try {
+            Boolean flag = wareSkuService.orderLockStock(vo);
+        }catch (NoStockExecption e){
+            // 表示锁定库存失败
+            return R.error(BizCodeEnume.NO_STOCK_EXCEPTION.getCode(),BizCodeEnume.NO_STOCK_EXCEPTION.getMsg());
+        }
+
+        return R.ok();
+    }
+
 
     /**
      * 列表

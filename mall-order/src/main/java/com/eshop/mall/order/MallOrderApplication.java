@@ -5,12 +5,10 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.cloud.client.discovery.EnableDiscoveryClient;
 import org.springframework.cloud.openfeign.EnableFeignClients;
+import org.springframework.session.data.redis.config.annotation.web.http.EnableRedisHttpSession;
 
-/**
- * basePackages 制定Fegin接口的路径
- */
-@EnableFeignClients(basePackages = "com.eshop.mall.order.fegin")
-//放开注册中心
+@EnableRedisHttpSession
+@EnableFeignClients(basePackages = "com.eshop.mall.order.fegin") //basePackages Fegin接口路径
 @EnableDiscoveryClient
 @SpringBootApplication
 @MapperScan("com.eshop.mall.order.dao")

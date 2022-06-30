@@ -1,19 +1,15 @@
 package com.eshop.mall.member.controller;
 
-import java.util.Arrays;
-import java.util.Map;
-
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
-
-import com.eshop.mall.member.entity.MemberReceiveAddressEntity;
-import com.eshop.mall.member.service.MemberReceiveAddressService;
 import com.eshop.common.utils.PageUtils;
 import com.eshop.common.utils.R;
+import com.eshop.mall.member.entity.MemberReceiveAddressEntity;
+import com.eshop.mall.member.service.MemberReceiveAddressService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.Arrays;
+import java.util.List;
+import java.util.Map;
 
 
 
@@ -29,6 +25,17 @@ import com.eshop.common.utils.R;
 public class MemberReceiveAddressController {
     @Autowired
     private MemberReceiveAddressService memberReceiveAddressService;
+
+    /**
+     * 根据用户id获取用户地址
+     * @param memberId
+     * @return
+     */
+    @GetMapping("/{memberId}/address")
+    public List<MemberReceiveAddressEntity> getAddress(@PathVariable("memberId") Long memberId){
+        return memberReceiveAddressService.getAddress(memberId);
+    }
+
 
     /**
      * 列表
@@ -51,6 +58,18 @@ public class MemberReceiveAddressController {
 		MemberReceiveAddressEntity memberReceiveAddress = memberReceiveAddressService.getById(id);
 
         return R.ok().put("memberReceiveAddress", memberReceiveAddress);
+    }
+
+    /**
+     * 通过id获取信息
+     * @param id
+     * @return MemberReceiveAddressEntity对象 不return R
+     */
+    @RequestMapping("/getAddressById/{id}")
+    @ResponseBody
+    public MemberReceiveAddressEntity getAddressById(@PathVariable("id") Long id){
+        MemberReceiveAddressEntity memberReceiveAddress = memberReceiveAddressService.getById(id);
+        return memberReceiveAddress;
     }
 
     /**

@@ -20,6 +20,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ThreadPoolExecutor;
+import java.util.stream.Collectors;
 
 /**
  * @Author ruomengjiang
@@ -107,6 +108,24 @@ public class ICartServiceImpl implements ICartService {
         hashOperations.put(skuId.toString(),json);
 
         return item;
+    }
+
+    /**
+     * 获取当前登录用户选中的商品信息 购物车中
+     * @return
+     */
+    @Override
+    public List<CartItem> getUserCartItems() {
+        BoundHashOperations<String, Object, Object> operations = getCartKeyOperation();
+        List<Object> values = operations.values();
+        List<CartItem> list = values.stream().map(item -> {
+            String json = (String) item;
+            CartItem cartItem = JSON.parseObject(json, CartItem.class);
+            return cartItem;
+        }).filter(item -> {
+            return item.isCheck();
+        }).collect(Collectors.toList());
+        return list;
     }
 
     private BoundHashOperations<String, Object, Object> getCartKeyOperation() {

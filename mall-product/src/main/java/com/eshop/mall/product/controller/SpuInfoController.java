@@ -4,11 +4,13 @@ import com.eshop.common.utils.PageUtils;
 import com.eshop.common.utils.R;
 import com.eshop.mall.product.entity.SpuInfoEntity;
 import com.eshop.mall.product.service.SpuInfoService;
+import com.eshop.mall.product.vo.OrderItemSpuInfoVO;
 import com.eshop.mall.product.vo.SpuInfoVO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Arrays;
+import java.util.List;
 import java.util.Map;
 
 
@@ -96,6 +98,11 @@ public class SpuInfoController {
         //PageUtils page = spuInfoService.queryPage(params);
         spuInfoService.up(spuId);
         return R.ok();
+    }
+
+    @RequestMapping("/getOrderItemSpuInfoBySpuId/{spuIds}")
+    public List<OrderItemSpuInfoVO> getOrderItemSpuInfoBySpuId(@PathVariable("spuIds") Long[] spuIds){
+        return spuInfoService.getOrderItemSpuInfoBySpuId(spuIds);
     }
 
 }

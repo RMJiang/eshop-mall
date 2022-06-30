@@ -60,3 +60,7 @@ spring:
           uri: lb://mall-cart
           predicates:
             - Host=cart.eshop.com
+        - id: eshopmall_host_route6
+          uri: lb://mall-order
+          predicates:
+            - Host=order.eshop.com

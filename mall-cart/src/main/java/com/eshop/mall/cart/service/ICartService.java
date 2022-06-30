@@ -3,6 +3,8 @@ package com.eshop.mall.cart.service;
 import com.eshop.mall.cart.vo.Cart;
 import com.eshop.mall.cart.vo.CartItem;
 
+import java.util.List;
+
 /**
  * @Author ruomengjiang
  * @Date 2022/6/28
@@ -14,4 +16,6 @@ public interface ICartService {
     public Cart getCartList();
 
     CartItem addCart(Long skuId, Integer num) throws Exception;
+
+    List<CartItem> getUserCartItems();
 }

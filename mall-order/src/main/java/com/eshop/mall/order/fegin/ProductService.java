@@ -8,13 +8,18 @@ package com.eshop.mall.order.fegin;
  */
 
 import com.eshop.common.utils.R;
+import com.eshop.mall.order.vo.OrderItemSpuInfoVO;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
+
+import java.util.List;
 
 /**
  * @FeignClient 指明我们要从注册中心中发现的服务的名称
  */
-@FeignClient(name = "mall-product")
+@FeignClient("mall-product")
 public interface ProductService {
 
     /**
@@ -23,4 +28,8 @@ public interface ProductService {
      */
     @GetMapping("/product/brand/all")
     public R queryAllBrand();
+
+    @RequestMapping("/product/spuinfo/getOrderItemSpuInfoBySpuId/{spuIds}")
+    public List<OrderItemSpuInfoVO> getOrderItemSpuInfoBySpuId(@PathVariable("spuIds") Long[] spuIds);
+
 }
