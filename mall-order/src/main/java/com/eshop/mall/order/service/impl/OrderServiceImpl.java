@@ -21,6 +21,7 @@ import com.eshop.mall.order.fegin.WareFeignService;
 import com.eshop.mall.order.interceptor.AuthInterceptor;
 import com.eshop.mall.order.service.OrderItemService;
 import com.eshop.mall.order.service.OrderService;
+import com.eshop.mall.order.utils.OrderMsgProducer;
 import com.eshop.mall.order.vo.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.StringRedisTemplate;
@@ -67,6 +68,9 @@ public class OrderServiceImpl extends ServiceImpl<OrderDao, OrderEntity> impleme
 
     @Autowired
     WareFeignService wareFeignService;
+
+    @Autowired
+    OrderMsgProducer orderMsgProducer;
 
     @Override
     public PageUtils queryPage(Map<String, Object> params) {
@@ -125,7 +129,7 @@ public class OrderServiceImpl extends ServiceImpl<OrderDao, OrderEntity> impleme
     private Lock lock = new ReentrantLock();
 
     /**
-     * Seata分布式事务管理 我们需要通过 @GlobalTransactional 修饰
+     * Seata分布式事务管理 需通过 @GlobalTransactional 修饰
      * @param vo
      * @return
      * @throws NoStockExecption
@@ -164,7 +168,7 @@ public class OrderServiceImpl extends ServiceImpl<OrderDao, OrderEntity> impleme
         // 5.同步更新用户的会员积分
         // int i = 1 / 0;
         // 订单成功后需要给 消息中间件发送延迟30分钟的关单消息
-        //orderMsgProducer.sendOrderMessage(orderCreateTO.getOrderEntity().getOrderSn());
+        orderMsgProducer.sendOrderMessage(orderCreateTO.getOrderEntity().getOrderSn());
         return responseVO;
     }
 

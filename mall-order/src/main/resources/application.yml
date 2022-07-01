@@ -8,6 +8,9 @@ spring:
     nacos:
       discovery:
         server-addr: 192.168.56.100:8848
+#    alibaba:
+#      seata:
+#        tx-service-group: mall-order-group
   application:
     name: mall-order
   redis:
@@ -33,3 +36,10 @@ server:
 user:
   userName: test
   age: 30
+
+rocketmq:
+  name-server: 192.168.56.100:9876
+  producer:
+    group: order-producer
+  consumer:
+    group: order-consumer
