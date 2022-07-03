@@ -6,6 +6,7 @@ import com.eshop.mall.order.entity.OrderEntity;
 import com.eshop.mall.order.vo.OrderConfirmVo;
 import com.eshop.mall.order.vo.OrderResponseVO;
 import com.eshop.mall.order.vo.OrderSubmitVO;
+import com.eshop.mall.order.vo.PayVo;
 
 import java.util.Map;
 
@@ -23,5 +24,11 @@ public interface OrderService extends IService<OrderEntity> {
     OrderConfirmVo confirmOrder();
 
     OrderResponseVO submitOrder(OrderSubmitVO vo);
+
+    PayVo getOrderPay(String orderSn);
+
+    void updateOrderStatus(String orderSn, Integer status);
+
+    void handleOrderComplete(String orderSn);
 }
 

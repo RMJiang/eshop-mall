@@ -33,6 +33,7 @@ import org.springframework.web.context.request.RequestAttributes;
 import org.springframework.web.context.request.RequestContextHolder;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.*;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
@@ -171,6 +172,42 @@ public class OrderServiceImpl extends ServiceImpl<OrderDao, OrderEntity> impleme
         orderMsgProducer.sendOrderMessage(orderCreateTO.getOrderEntity().getOrderSn());
         return responseVO;
     }
+
+    @Override
+    public PayVo getOrderPay(String orderSn) {
+        // 根据订单号查询相关的订单信息
+        OrderEntity orderEntity = this.getBaseMapper().getOrderByOrderSn(orderSn);
+        // 通过订单信息封装 PayVO对象
+        PayVo payVo = new PayVo();
+        payVo.setOut_trader_no(orderSn);
+        payVo.setTotal_amount(orderEntity.getTotalAmount().setScale(2, RoundingMode.UP).toString());
+        // 订单名称和订单描述
+        payVo.setSubject(orderEntity.getOrderSn());
+        payVo.setBody(orderEntity.getOrderSn());
+        return payVo;
+    }
+
+    /**
+     * 更新订单的状态信息
+     * @param orderSn
+     */
+    @Override
+    public void updateOrderStatus(String orderSn, Integer status) {
+        this.getBaseMapper().updateOrderStatus(orderSn,status);
+    }
+
+    @Override
+    public void handleOrderComplete(String orderSn) {
+        // 1.更新订单状态
+        this.updateOrderStatus(orderSn,OrderConstant.OrderStateEnum.TO_SEND_GOODS.getCode());
+        // TODO
+        // 2.更新库存信息 库存数量递减
+
+        // 3.购物车中的已经支付的商品移除
+
+        // 4.更新会员积分 ....
+    }
+
 
     /**
      * 锁定库存的方法

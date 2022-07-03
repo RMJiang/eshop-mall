@@ -1,15 +1,20 @@
 package com.eshop.mall.order.web;
 
 import com.eshop.common.exception.NoStockExecption;
+import com.eshop.mall.order.config.AlipayTemplate;
 import com.eshop.mall.order.service.OrderService;
 import com.eshop.mall.order.vo.OrderConfirmVo;
 import com.eshop.mall.order.vo.OrderResponseVO;
 import com.eshop.mall.order.vo.OrderSubmitVO;
+import com.eshop.mall.order.vo.PayVo;
+import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 /**
@@ -23,6 +28,9 @@ public class OrderWebController {
 
     @Autowired
     private OrderService orderService;
+
+    @Autowired
+    AlipayTemplate alipayTemplate;
 
     @GetMapping("/toTrade")
     public String toTrade(Model model){
@@ -62,5 +70,37 @@ public class OrderWebController {
         }
     }
 
+
+    @GetMapping("/orderPay/returnUrl")
+    public String orderPay(@RequestParam(value = "orderSn",required = false) String orderSn,
+                           @RequestParam(value = "out_trade_no",required = false) String out_trade_no){
+        // TODO 完成相关的支付操作
+        //System.out.println("orderSn = " + orderSn);
+        if(StringUtils.isNotBlank(orderSn)){
+            orderService.handleOrderComplete(orderSn);
+        }
+        else{
+            orderService.handleOrderComplete(out_trade_no);
+        }
+        return "list";
+    }
+
+
+    /**
+     * 获取订单相关信息
+     * 然后跳转到支付页面
+     * wdtauf9432@sandbox.com
+     * @param orderSn
+     * @return
+     */
+    @GetMapping(value = "/payOrder",produces = "text/html")
+    @ResponseBody
+    public String payOrder(@RequestParam("orderSn") String orderSn){
+        // 根据订单编号查询出相关的订单信息，封装到PayVO中
+        PayVo payVo = orderService.getOrderPay(orderSn);
+        String pay = alipayTemplate.pay(payVo);
+        //System.out.println(pay);
+        return pay;
+    }
 
 }

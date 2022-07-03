@@ -47,7 +47,9 @@ public class ElasticSearchSaveServiceImpl implements ElasticSearchSaveService {
             // 设置文档
             ObjectMapper mapper = new ObjectMapper();
             String json = mapper.writeValueAsString(skuESModel);
+            System.out.println("-------->>>>"+json);
             indexRequest.source(json, XContentType.JSON);
+
             // 转换后的数据封装到Bulk中
             bulkRequest.add(indexRequest);
         }

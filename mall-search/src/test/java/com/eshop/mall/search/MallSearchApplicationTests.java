@@ -191,7 +191,7 @@ class MallSearchApplicationTests {
 
         // 2.如何执行检索操作
         SearchResponse response = client.search(searchRequest, MallElasticSearchConfiguration.COMMON_OPTIONS);
-        // 3.获取检索后的响应对象，我们需要解析出我们关心的数据
+        // 3.获取检索后的响应对象，需解析数据
         // System.out.println("ElasticSearch检索的信息："+response);
         RestStatus status = response.status();
         TimeValue took = response.getTook();

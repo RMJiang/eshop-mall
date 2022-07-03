@@ -5,16 +5,13 @@ import com.eshop.mall.search.constant.ESConstant;
 import com.eshop.mall.search.service.MallSearchService;
 import com.eshop.mall.search.vo.SearchParam;
 import com.eshop.mall.search.vo.SearchResult;
-import org.apache.lucene.search.join.ScoreMode;
 import org.elasticsearch.action.search.SearchRequest;
 import org.elasticsearch.action.search.SearchResponse;
 import org.elasticsearch.client.RestHighLevelClient;
 import org.elasticsearch.index.query.BoolQueryBuilder;
-import org.elasticsearch.index.query.NestedQueryBuilder;
 import org.elasticsearch.index.query.QueryBuilders;
 import org.elasticsearch.index.query.RangeQueryBuilder;
 import org.elasticsearch.search.aggregations.AggregationBuilders;
-import org.elasticsearch.search.aggregations.bucket.nested.NestedAggregationBuilder;
 import org.elasticsearch.search.aggregations.bucket.terms.TermsAggregationBuilder;
 import org.elasticsearch.search.builder.SearchSourceBuilder;
 import org.elasticsearch.search.fetch.subphase.highlight.HighlightBuilder;
@@ -121,8 +118,8 @@ public class MallSearchServiceImpl implements MallSearchService {
                 boolNestedQuery.must(QueryBuilders.termQuery("attrs.attrId", attrId));
                 boolNestedQuery.must(QueryBuilders.termsQuery("attrs.attrValue",values));
 
-                NestedQueryBuilder nestedQuery = QueryBuilders.nestedQuery("attrs", boolNestedQuery, ScoreMode.None);
-                boolQuery.filter(nestedQuery);
+                //NestedQueryBuilder nestedQuery = QueryBuilders.nestedQuery("attrs", boolNestedQuery, ScoreMode.None);
+                boolQuery.filter(boolNestedQuery);
             }
         }
         sourceBuilder.query(boolQuery);
@@ -175,17 +172,18 @@ public class MallSearchServiceImpl implements MallSearchService {
         sourceBuilder.aggregation(catalog_agg);
 
         // 5.3 属性的聚合
-        NestedAggregationBuilder attr_agg = AggregationBuilders.nested("attr_agg", "attrs");
+        /**
+        TermsAggregationBuilder attr_agg = AggregationBuilders.terms("attr_agg");
         // 属性id聚合
-        TermsAggregationBuilder attr_id_agg = AggregationBuilders.terms("attr_id_agg");
-        attr_id_agg.field("attrs.attrId");
-        attr_id_agg.size(10);
+        //TermsAggregationBuilder attr_id_agg = AggregationBuilders.terms("attr_id_agg");
+        //attr_id_agg.field("attrs.attrId");
+        //attr_id_agg.size(10);
         // 属性id下的子聚合 属性名称和属性值
-        attr_id_agg.subAggregation(AggregationBuilders.terms("attr_name_agg").field("attrs.attrName").size(10));
-        attr_id_agg.subAggregation(AggregationBuilders.terms("attr_value_agg").field("attrs.attrValue").size(10));
-        attr_agg.subAggregation(attr_id_agg);
-        sourceBuilder.aggregation(attr_agg);
-
+        attr_agg.subAggregation(AggregationBuilders.terms("attr_id_agg").field("attrs.attrId").size(10));
+        attr_agg.subAggregation(AggregationBuilders.terms("attr_name_agg").field("attrs.attrName.keyword").size(10));
+        attr_agg.subAggregation(AggregationBuilders.terms("attr_value_agg").field("attrs.attrValue.keyword").size(10));
+        //attr_agg.subAggregation(attr_agg);
+        sourceBuilder.aggregation(attr_agg);*/
 
         System.out.println(sourceBuilder.toString());
         searchRequest.source(sourceBuilder);
@@ -198,7 +196,8 @@ public class MallSearchServiceImpl implements MallSearchService {
      * @param response
      * @return
      */
-    private SearchResult buildSearchResult(SearchResponse response,SearchParam param){/**
+    private SearchResult buildSearchResult(SearchResponse response,SearchParam param){
+        /**
         SearchResult result = new SearchResult();
         SearchHits hits = response.getHits();
         // 1.检索的所有商品信息
@@ -304,7 +303,8 @@ public class MallSearchServiceImpl implements MallSearchService {
             navs.add(i);
         }
         result.setNavs(navs);
-        return result;*/
+        return result;
+         */
         return null;
     }
 }
