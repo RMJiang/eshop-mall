@@ -4,20 +4,40 @@
 分布式商城系统
 
 #### 软件架构
-软件架构说明
+说明
+
+![](https://eshopping-mall.oss-cn-hangzhou.aliyuncs.com/project/architecture.png)
 
 
 #### 安装教程
 
-1.  xxxx
-2.  xxxx
-3.  xxxx
-
 #### 使用说明
 
-1.  xxxx
-2.  xxxx
-3.  xxxx
+1. 相关技术：SpringBoot，SpringCloud Alibaba，Nacos，Gateway，OpenFeign，Mysql，Redis，Mybatis-Plus，Vue ElementUI，Thymeleaf，阿里云对象存储OSS，ElasticSearch，Docker，RocketMQ等
+
+2. 服务和模块：mall-auth_server    登录认证    短信&微博认证
+
+   ​		    		   mall-cart    购物车模块
+
+   ​					   mall-commons    基础设置
+
+   ​					   mall-coupon    优惠券模块
+
+   ​					   mall-gateway    网关配置
+
+   ​					   mall-member     用户会员模块
+
+   ​					   mall-order    订单模块
+
+   ​					   mall-product    商品模块
+
+   ​					   mall-search    检索服务  ElasticSearch
+
+   ​					   mall-seckill    秒杀服务
+
+   ​					   mall-third-party    第三方服务 短信&微博认证服务   阿里云对象存储OSS
+
+   ​					   mall-ware    库存模块
 
 #### 参与贡献
 
