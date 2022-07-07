@@ -20,6 +20,8 @@ spring:
     store-type: redis
     redis:
       namespace: spring:session
+  thymeleaf:
+    cache: false
 
 mybatis-plus:
   mapper-locations: classpath*:/mapper/**/*.xml

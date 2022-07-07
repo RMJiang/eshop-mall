@@ -1,0 +1,35 @@
+spring:
+  cloud:
+    nacos:
+      discovery:
+        server-addr: 192.168.56.100:8848
+  application:
+    name: mall-seckill
+  redis:
+    host: 192.168.56.100
+    port: 6379
+  session:
+    store-type: redis
+    redis:
+      namespace: spring:session
+  task:
+    execution:
+      pool:
+        core-size: 5
+        max-size: 20
+  thymeleaf:
+    cache: false
+
+server:
+  port: 9600
+
+rocketmq:
+  name-server: 192.168.56.100:9876
+  producer:
+    group: seckill-order-producer
+  consumer:
+    group: seckill-order-consumer
+
+
+
+

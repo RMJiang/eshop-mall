@@ -29,4 +29,6 @@ public class SpuItemVO {
     List<SpuItemGroupAttrVo> baseAttrs;
     //6.是否有货
     boolean hasStock = true;
+    //7.对应的秒杀服务
+    SeckillVO seckillVO;
 }

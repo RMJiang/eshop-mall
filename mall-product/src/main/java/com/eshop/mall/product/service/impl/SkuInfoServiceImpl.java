@@ -1,15 +1,19 @@
 package com.eshop.mall.product.service.impl;
 
+import com.alibaba.fastjson.JSON;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.eshop.common.utils.PageUtils;
 import com.eshop.common.utils.Query;
+import com.eshop.common.utils.R;
 import com.eshop.mall.product.dao.SkuInfoDao;
 import com.eshop.mall.product.entity.SkuImagesEntity;
 import com.eshop.mall.product.entity.SkuInfoEntity;
 import com.eshop.mall.product.entity.SpuInfoDescEntity;
+import com.eshop.mall.product.feign.SeckillFeignService;
 import com.eshop.mall.product.service.*;
+import com.eshop.mall.product.vo.SeckillVO;
 import com.eshop.mall.product.vo.SkuItemSaleAttrVo;
 import com.eshop.mall.product.vo.SpuItemGroupAttrVo;
 import com.eshop.mall.product.vo.SpuItemVO;
@@ -45,6 +49,9 @@ public class SkuInfoServiceImpl extends ServiceImpl<SkuInfoDao, SkuInfoEntity> i
 
     @Autowired
     SkuInfoDao skuInfoDao;
+
+    @Autowired
+    SeckillFeignService seckillFeignService;
 
     @Override
     public PageUtils queryPage(Map<String, Object> params) {
@@ -160,7 +167,14 @@ public class SkuInfoServiceImpl extends ServiceImpl<SkuInfoDao, SkuInfoEntity> i
             vo.setImages(images);
         }, threadPoolExecutor);
 
-        CompletableFuture.allOf(saleFuture,spuFuture,imageFuture,groupFuture).get();
+        CompletableFuture<Void> seckillFuture = CompletableFuture.runAsync(() -> {
+            //查询商品的秒杀活动
+            R r = seckillFeignService.getSeckillSessionBySkuId(skuId);
+            SeckillVO seckillVO = JSON.parseObject(r.get("data").toString(),SeckillVO.class);
+            vo.setSeckillVO(seckillVO);
+        }, threadPoolExecutor);
+
+        CompletableFuture.allOf(saleFuture,spuFuture,imageFuture,groupFuture,seckillFuture).get();
         return vo;
 
     }

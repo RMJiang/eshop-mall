@@ -1,19 +1,16 @@
 package com.eshop.mall.coupon.controller;
 
-import java.util.Arrays;
-import java.util.Map;
-
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
-
-import com.eshop.mall.coupon.entity.SeckillSessionEntity;
-import com.eshop.mall.coupon.service.SeckillSessionService;
+import com.alibaba.fastjson.JSON;
 import com.eshop.common.utils.PageUtils;
 import com.eshop.common.utils.R;
+import com.eshop.mall.coupon.entity.SeckillSessionEntity;
+import com.eshop.mall.coupon.service.SeckillSessionService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.Arrays;
+import java.util.List;
+import java.util.Map;
 
 
 
@@ -29,6 +26,18 @@ import com.eshop.common.utils.R;
 public class SeckillSessionController {
     @Autowired
     private SeckillSessionService seckillSessionService;
+
+    /**
+     * 获取未来三天秒杀数据
+     * @return
+     */
+    @GetMapping("/getLates3DaysSession")
+    public R getLates3DaysSession(){
+        List<SeckillSessionEntity> lates3DaysSession = seckillSessionService.getLates3DaysSession();
+        String json = JSON.toJSONString(lates3DaysSession);
+        return R.ok().put("data",json);
+    }
+
 
     /**
      * 列表
