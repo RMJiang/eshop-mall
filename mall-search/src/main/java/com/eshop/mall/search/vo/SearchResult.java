@@ -13,6 +13,7 @@ import java.util.List;
  */
 @Data
 public class SearchResult {
+
     private List<SkuESModel> products; // 查询到的所有的商品信息 满足条件
     // 分页信息
     private Integer pageNum; // 当前页

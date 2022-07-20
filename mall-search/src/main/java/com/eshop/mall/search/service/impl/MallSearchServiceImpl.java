@@ -1,31 +1,42 @@
 package com.eshop.mall.search.service.impl;
 
+import com.alibaba.fastjson.JSON;
+import com.eshop.common.dto.es.SkuESModel;
 import com.eshop.mall.search.config.MallElasticSearchConfiguration;
 import com.eshop.mall.search.constant.ESConstant;
 import com.eshop.mall.search.service.MallSearchService;
 import com.eshop.mall.search.vo.SearchParam;
 import com.eshop.mall.search.vo.SearchResult;
+import org.apache.lucene.search.join.ScoreMode;
 import org.elasticsearch.action.search.SearchRequest;
 import org.elasticsearch.action.search.SearchResponse;
 import org.elasticsearch.client.RestHighLevelClient;
 import org.elasticsearch.index.query.BoolQueryBuilder;
+import org.elasticsearch.index.query.NestedQueryBuilder;
 import org.elasticsearch.index.query.QueryBuilders;
 import org.elasticsearch.index.query.RangeQueryBuilder;
+import org.elasticsearch.search.SearchHit;
+import org.elasticsearch.search.SearchHits;
 import org.elasticsearch.search.aggregations.AggregationBuilders;
+import org.elasticsearch.search.aggregations.Aggregations;
+import org.elasticsearch.search.aggregations.bucket.nested.NestedAggregationBuilder;
+import org.elasticsearch.search.aggregations.bucket.nested.ParsedNested;
+import org.elasticsearch.search.aggregations.bucket.terms.ParsedLongTerms;
+import org.elasticsearch.search.aggregations.bucket.terms.ParsedStringTerms;
+import org.elasticsearch.search.aggregations.bucket.terms.Terms;
 import org.elasticsearch.search.aggregations.bucket.terms.TermsAggregationBuilder;
 import org.elasticsearch.search.builder.SearchSourceBuilder;
 import org.elasticsearch.search.fetch.subphase.highlight.HighlightBuilder;
+import org.elasticsearch.search.fetch.subphase.highlight.HighlightField;
 import org.elasticsearch.search.sort.SortOrder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
-/**
- * @Author ruomengjiang
- * @Date 2022/6/19
- * @Description : eshop-mall
- * @Version: 1.0
- */
+import java.util.ArrayList;
+import java.util.List;
+import java.util.stream.Collectors;
+
 @Service
 public class MallSearchServiceImpl implements MallSearchService {
 
@@ -41,10 +52,10 @@ public class MallSearchServiceImpl implements MallSearchService {
         try {
             // 2.执行检索操作
             SearchResponse response = client.search(request, MallElasticSearchConfiguration.COMMON_OPTIONS);
-            // 3.需要把检索的信息封装为SearchResult
+            // 3.把检索的信息封装为SearchResult
             result = buildSearchResult(response,param);
         } catch (Exception e) {
-            e.printStackTrace();
+
         }
         return result;
     }
@@ -88,17 +99,17 @@ public class MallSearchServiceImpl implements MallSearchService {
             String[] msg = param.getSkuPrice().split("_");
             RangeQueryBuilder skuPrice = QueryBuilders.rangeQuery("skuPrice");
             if(msg.length == 2){
-                // 说明是 200_300
+                // 200_300
                 skuPrice.gte(msg[0]);
                 skuPrice.lte(msg[1]);
             }else if(msg.length == 1){
-                // 说明是 _300  200_
+                // _300  200_
                 if(param.getSkuPrice().endsWith("_")){
-                    // 说明是 200_
+                    // 200_
                     skuPrice.gte(msg[0]);
                 }
                 if(param.getSkuPrice().startsWith("_")){
-                    // 说明是 _300
+                    // _300
                     skuPrice.lte(msg[0]);
                 }
             }
@@ -115,11 +126,11 @@ public class MallSearchServiceImpl implements MallSearchService {
                 // 64GB:32GB  获取属性的值
                 String[] values = attrStrArray[1].split(":");
                 // 拼接组合条件
-                boolNestedQuery.must(QueryBuilders.termQuery("attrs.attrId", attrId));
+                boolNestedQuery.must(QueryBuilders.termQuery("attrs.attrId",attrId));
                 boolNestedQuery.must(QueryBuilders.termsQuery("attrs.attrValue",values));
 
-                //NestedQueryBuilder nestedQuery = QueryBuilders.nestedQuery("attrs", boolNestedQuery, ScoreMode.None);
-                boolQuery.filter(boolNestedQuery);
+                NestedQueryBuilder nestedQuery = QueryBuilders.nestedQuery("attrs", boolNestedQuery, ScoreMode.None);
+                boolQuery.filter(nestedQuery);
             }
         }
         sourceBuilder.query(boolQuery);
@@ -128,13 +139,13 @@ public class MallSearchServiceImpl implements MallSearchService {
         if(!StringUtils.isEmpty(param.getSort())){
             // sort=salaCount_asc/desc
             String[] s = param.getSort().split("_");
-            SortOrder order = s[1].equalsIgnoreCase("asc")? SortOrder.ASC:SortOrder.DESC;
+            SortOrder order = s[1].equalsIgnoreCase("asc")?SortOrder.ASC:SortOrder.DESC;
             sourceBuilder.sort(s[0], order);
         }
         // 3.处理分页
         // Integer pageNum; // 页码
         if(param.getPageNum() != null){
-            // 需要做分页处理 pageSize = 5
+            // 分页处理 pageSize = 5
             // pageNum:1 from:0  [0,1,2,3,4]
             // pageNum:2 from:5 [5,6,7,8,9]
             // from = ( pageNum - 1 ) * pageSize
@@ -144,7 +155,7 @@ public class MallSearchServiceImpl implements MallSearchService {
 
         // 4. 设置高亮
         if(!StringUtils.isEmpty(param.getKeyword())){
-            // 如有根据关键字查询 需要高亮设置
+            // 如有根据关键字查询 则需要高亮设置
             HighlightBuilder highlightBuilder = new HighlightBuilder();
             highlightBuilder.field("subTitle");
             highlightBuilder.preTags("<b style='color:red'>");
@@ -154,38 +165,35 @@ public class MallSearchServiceImpl implements MallSearchService {
 
         // 5.聚合运算
         // 5.1 品牌的聚合
-
         TermsAggregationBuilder brand_agg = AggregationBuilders.terms("brand_agg");
         brand_agg.field("brandId");
         brand_agg.size(50);
         // 品牌的子聚合
-        brand_agg.subAggregation(AggregationBuilders.terms("brand_name_agg").field("brandName.keyword").size(10));
-        brand_agg.subAggregation(AggregationBuilders.terms("brand_img_agg").field("brandImg.keyword").size(10));
+        brand_agg.subAggregation(AggregationBuilders.terms("brand_name_agg").field("brandName").size(10));
+        brand_agg.subAggregation(AggregationBuilders.terms("brand_img_agg").field("brandImg").size(10));
         sourceBuilder.aggregation(brand_agg);
 
         // 5.2 类别的聚合
         TermsAggregationBuilder catalog_agg = AggregationBuilders.terms("catalog_agg");
-        catalog_agg.field("catalogId.keyword");
+        catalog_agg.field("catalogId");
         catalog_agg.size(10);
         // 类别的子聚合
-        catalog_agg.subAggregation(AggregationBuilders.terms("catalog_name_agg").field("catalogName.keyword").size(10));
+        catalog_agg.subAggregation(AggregationBuilders.terms("catalog_name_agg").field("catalogName").size(10));
         sourceBuilder.aggregation(catalog_agg);
 
         // 5.3 属性的聚合
-        /**
-        TermsAggregationBuilder attr_agg = AggregationBuilders.terms("attr_agg");
+        NestedAggregationBuilder attr_agg = AggregationBuilders.nested("attr_agg", "attrs");
         // 属性id聚合
-        //TermsAggregationBuilder attr_id_agg = AggregationBuilders.terms("attr_id_agg");
-        //attr_id_agg.field("attrs.attrId");
-        //attr_id_agg.size(10);
+        TermsAggregationBuilder attr_id_agg = AggregationBuilders.terms("attr_id_agg");
+        attr_id_agg.field("attrs.attrId");
+        attr_id_agg.size(10);
         // 属性id下的子聚合 属性名称和属性值
-        attr_agg.subAggregation(AggregationBuilders.terms("attr_id_agg").field("attrs.attrId").size(10));
-        attr_agg.subAggregation(AggregationBuilders.terms("attr_name_agg").field("attrs.attrName.keyword").size(10));
-        attr_agg.subAggregation(AggregationBuilders.terms("attr_value_agg").field("attrs.attrValue.keyword").size(10));
-        //attr_agg.subAggregation(attr_agg);
-        sourceBuilder.aggregation(attr_agg);*/
+        attr_id_agg.subAggregation(AggregationBuilders.terms("attr_name_agg").field("attrs.attrName").size(10));
+        attr_id_agg.subAggregation(AggregationBuilders.terms("attr_value_agg").field("attrs.attrValue").size(10));
+        attr_agg.subAggregation(attr_id_agg);
+        sourceBuilder.aggregation(attr_agg);
 
-        System.out.println(sourceBuilder.toString());
+        System.out.println("ES查询语句--->"+sourceBuilder.toString());
         searchRequest.source(sourceBuilder);
 
         return searchRequest;
@@ -197,7 +205,6 @@ public class MallSearchServiceImpl implements MallSearchService {
      * @return
      */
     private SearchResult buildSearchResult(SearchResponse response,SearchParam param){
-        /**
         SearchResult result = new SearchResult();
         SearchHits hits = response.getHits();
         // 1.检索的所有商品信息
@@ -206,7 +213,7 @@ public class MallSearchServiceImpl implements MallSearchService {
         if(products != null && products.length > 0){
             for (SearchHit product : products) {
                 String sourceAsString = product.getSourceAsString();
-                // 把json格式的字符串通过fastjson转换为SkuESModel对象
+                // 把json格式的字符串转换为SkuESModel对象
                 SkuESModel model = JSON.parseObject(sourceAsString, SkuESModel.class);
                 if(!StringUtils.isEmpty(param.getKeyword())){
                     // 设置高亮
@@ -222,7 +229,7 @@ public class MallSearchServiceImpl implements MallSearchService {
         // 2.当前商品所涉及到的所有的品牌
         ParsedLongTerms brand_agg = aggregations.get("brand_agg");
         List<? extends Terms.Bucket> buckets = brand_agg.getBuckets();
-        // 存储所有品牌的容器
+        // 存储所有品牌的集合
         List<SearchResult.BrandVO> brandVOS = new ArrayList<>();
         if(buckets!=null && buckets.size() > 0){
             for (Terms.Bucket bucket : buckets) {
@@ -249,7 +256,7 @@ public class MallSearchServiceImpl implements MallSearchService {
         // 3.当前商品涉及到的所有的类别信息
         ParsedLongTerms catalog_agg = aggregations.get("catalog_agg");
         List<? extends Terms.Bucket> bucketsCatalogs = catalog_agg.getBuckets();
-        // 创建一个保存所有类别的容器
+        // 创建一个保存所有类别的集合
         List<SearchResult.CatalogVO> catalogVOS = new ArrayList<>();
         if(bucketsCatalogs != null && bucketsCatalogs.size() > 0){
             for (Terms.Bucket bucket : bucketsCatalogs) {
@@ -275,7 +282,7 @@ public class MallSearchServiceImpl implements MallSearchService {
                 // 获取属性的编号
                 String keyAsString = bucket.getKeyAsString();
                 attrVo.setAttrId(Long.parseLong(keyAsString));
-                // 又得分别获取 属性的名称 和 属性的值
+                // 分别获取 属性的名称 和 属性的值
                 ParsedStringTerms attr_name_agg = bucket.getAggregations().get("attr_name_agg");
                 String attrName = attr_name_agg.getBuckets().get(0).getKeyAsString(); // 属性的名称
                 attrVo.setAttrName(attrName);
@@ -304,7 +311,5 @@ public class MallSearchServiceImpl implements MallSearchService {
         }
         result.setNavs(navs);
         return result;
-         */
-        return null;
     }
 }

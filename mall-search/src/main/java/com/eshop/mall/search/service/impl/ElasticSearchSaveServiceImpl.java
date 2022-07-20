@@ -1,10 +1,10 @@
 package com.eshop.mall.search.service.impl;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.eshop.common.dto.es.SkuESModel;
 import com.eshop.mall.search.config.MallElasticSearchConfiguration;
 import com.eshop.mall.search.constant.ESConstant;
 import com.eshop.mall.search.service.ElasticSearchSaveService;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import org.elasticsearch.action.bulk.BulkRequest;
 import org.elasticsearch.action.bulk.BulkResponse;
 import org.elasticsearch.action.index.IndexRequest;
@@ -32,7 +32,6 @@ public class ElasticSearchSaveServiceImpl implements ElasticSearchSaveService {
      * 实现上架数据存储到ES的操作
      * @param skuESModels
      * @return
-     * @throws IOException
      */
     @Override
     public Boolean productStatusUp(List<SkuESModel> skuESModels) throws IOException {
@@ -47,9 +46,7 @@ public class ElasticSearchSaveServiceImpl implements ElasticSearchSaveService {
             // 设置文档
             ObjectMapper mapper = new ObjectMapper();
             String json = mapper.writeValueAsString(skuESModel);
-            System.out.println("-------->>>>"+json);
             indexRequest.source(json, XContentType.JSON);
-
             // 转换后的数据封装到Bulk中
             bulkRequest.add(indexRequest);
         }

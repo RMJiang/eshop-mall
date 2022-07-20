@@ -118,7 +118,7 @@ public class MemberServiceImpl extends ServiceImpl<MemberDao, MemberEntity> impl
             memberEntity.setExpiresIn(vo.getExpiresIn());
             return memberEntity;
         }
-        // 如果用户是第一提交，那么我们就需要对应的来注册
+        // 表示用户是第一提交，那么我们就需要对应的来注册
         MemberEntity entity = new MemberEntity();
         entity.setAccessToken(vo.getAccessToken());
         entity.setExpiresIn(vo.getExpiresIn());
@@ -149,6 +149,7 @@ public class MemberServiceImpl extends ServiceImpl<MemberDao, MemberEntity> impl
         this.save(entity);
         return entity;
     }
+
 
 
     /**

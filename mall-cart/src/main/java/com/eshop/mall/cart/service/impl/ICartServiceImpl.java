@@ -12,7 +12,7 @@ import com.eshop.mall.cart.vo.CartItem;
 import com.eshop.mall.cart.vo.SkuInfoVo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.BoundHashOperations;
-import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -33,7 +33,7 @@ import java.util.stream.Collectors;
 public class ICartServiceImpl implements ICartService {
 
     @Autowired
-    private RedisTemplate redisTemplate;
+    private StringRedisTemplate redisTemplate;
 
     @Autowired
     private ProductFeignService productFeignService;

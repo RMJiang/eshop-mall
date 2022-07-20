@@ -24,6 +24,7 @@ import com.eshop.mall.order.service.OrderItemService;
 import com.eshop.mall.order.service.OrderService;
 import com.eshop.mall.order.utils.OrderMsgProducer;
 import com.eshop.mall.order.vo.*;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.data.redis.core.script.DefaultRedisScript;
@@ -203,7 +204,16 @@ public class OrderServiceImpl extends ServiceImpl<OrderDao, OrderEntity> impleme
         this.updateOrderStatus(orderSn,OrderConstant.OrderStateEnum.TO_SEND_GOODS.getCode());
         // TODO
         // 2.更新库存信息 库存数量递减
-
+        //根据orderSn查询出OrderItem信息
+        List<OrderItemVo> itemVos = new ArrayList<>();
+        List<OrderItemEntity> orderItemsList = orderItemService.list(new QueryWrapper<OrderItemEntity>().eq("order_sn", orderSn));
+        for (OrderItemEntity entity : orderItemsList) {
+            OrderItemVo orderItemVo = new OrderItemVo();
+            BeanUtils.copyProperties(entity,orderItemVo);
+            orderItemVo.setCount(entity.getSkuQuantity());
+            itemVos.add(orderItemVo);
+        }
+        R r = wareFeignService.completeOrderWare(itemVos);
         // 3.购物车中的已经支付的商品移除
 
         // 4.更新会员积分 ....

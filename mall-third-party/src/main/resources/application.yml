@@ -14,11 +14,19 @@ spring:
         path: /data/send_sms
         method: POST
         appCode: cd8de5a41ea84886aad973df1b844967
+    sentinel:
+      transport:
+        port: 8719
+        dashboard: 192.168.56.100:8858
+        client-ip: 192.168.56.1
   application:
     name: mall-third
 
 server:
   port: 8090
 
-
-
+management:
+  endpoints:
+    web:
+      exposure:
+        include: '*'

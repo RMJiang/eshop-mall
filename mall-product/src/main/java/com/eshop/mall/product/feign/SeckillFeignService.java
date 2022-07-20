@@ -1,6 +1,7 @@
 package com.eshop.mall.product.feign;
 
 import com.eshop.common.utils.R;
+import com.eshop.mall.product.feign.fallback.SeckillFeignServiceFallback;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -11,7 +12,7 @@ import org.springframework.web.bind.annotation.RequestParam;
  * @Description : eshop-mall
  * @Version: 1.0
  */
-@FeignClient("mall-seckill")
+@FeignClient(value = "mall-seckill", fallback = SeckillFeignServiceFallback.class)
 public interface SeckillFeignService {
 
     @GetMapping("/seckill/seckillSessionBySkuId")

@@ -7,6 +7,7 @@ import com.eshop.common.utils.PageUtils;
 import com.eshop.common.utils.R;
 import com.eshop.mall.ware.entity.WareSkuEntity;
 import com.eshop.mall.ware.service.WareSkuService;
+import com.eshop.mall.ware.vo.OrderItemVo;
 import com.eshop.mall.ware.vo.WareSkuLockVO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -116,4 +117,9 @@ public class WareSkuController {
         return list;
     }
 
+    @PostMapping("/updateStock")
+    public R completeOrderWare(@RequestBody List<OrderItemVo> list){
+        wareSkuService.updateStock(list);
+        return R.ok();
+    }
 }

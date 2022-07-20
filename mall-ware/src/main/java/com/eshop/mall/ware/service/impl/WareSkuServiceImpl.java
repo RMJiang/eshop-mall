@@ -170,6 +170,17 @@ public class WareSkuServiceImpl extends ServiceImpl<WareSkuDao, WareSkuEntity> i
         return true;
     }
 
+    @Override
+    public void updateStock(List<OrderItemVo> list) {
+
+        for (OrderItemVo orderItemVo : list) {
+            WareSkuEntity wareSkuEntity = this.getOne(new QueryWrapper<WareSkuEntity>().eq("sku_id",orderItemVo.getSkuId()));
+            wareSkuEntity.setStock(wareSkuEntity.getStock() - orderItemVo.getCount());
+            wareSkuEntity.setStockLocked(wareSkuEntity.getStockLocked() - orderItemVo.getCount());
+            this.updateById(wareSkuEntity);
+        }
+    }
+
     @Data
     class SkuWareHasStock{
         private Long skuId;
