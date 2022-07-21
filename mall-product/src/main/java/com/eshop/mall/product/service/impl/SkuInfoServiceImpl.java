@@ -17,6 +17,9 @@ import com.eshop.mall.product.vo.SeckillVO;
 import com.eshop.mall.product.vo.SkuItemSaleAttrVo;
 import com.eshop.mall.product.vo.SpuItemGroupAttrVo;
 import com.eshop.mall.product.vo.SpuItemVO;
+import org.apache.skywalking.apm.toolkit.trace.Tag;
+import org.apache.skywalking.apm.toolkit.trace.Tags;
+import org.apache.skywalking.apm.toolkit.trace.Trace;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
@@ -132,6 +135,19 @@ public class SkuInfoServiceImpl extends ServiceImpl<SkuInfoDao, SkuInfoEntity> i
         return list;
     }
 
+    /**
+     * @Trace 当前方法会被skywalking追踪
+     * @Tag 显示指定返回结果和参数
+     * @param skuId
+     * @return
+     * @throws ExecutionException
+     * @throws InterruptedException
+     */
+    @Trace
+    @Tags({
+            @Tag(key="item",value = "returnedObj")
+            ,@Tag(key="itemParam",value = "arg[0]")
+    })
     @Override
     public SpuItemVO item(Long skuId) throws ExecutionException, InterruptedException {
         SpuItemVO vo = new SpuItemVO();

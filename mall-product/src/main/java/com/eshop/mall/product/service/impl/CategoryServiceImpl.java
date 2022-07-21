@@ -12,6 +12,7 @@ import com.eshop.mall.product.entity.CategoryEntity;
 import com.eshop.mall.product.service.CategoryBrandRelationService;
 import com.eshop.mall.product.service.CategoryService;
 import com.eshop.mall.product.vo.Catalog2VO;
+import org.apache.skywalking.apm.toolkit.trace.Trace;
 import org.redisson.api.RLock;
 import org.redisson.api.RedissonClient;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -179,6 +180,7 @@ public class CategoryServiceImpl extends ServiceImpl<CategoryDao, CategoryEntity
      * ,sync = true加本地锁
      * @return
      */
+    @Trace
     @Cacheable(value = "catagory", key = "#root.method.name")
     @Override
     public List<CategoryEntity> getLeve1Category() {

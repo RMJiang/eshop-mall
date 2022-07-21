@@ -10,6 +10,9 @@ import com.eshop.mall.coupon.entity.SeckillSessionEntity;
 import com.eshop.mall.coupon.entity.SeckillSkuRelationEntity;
 import com.eshop.mall.coupon.service.SeckillSessionService;
 import com.eshop.mall.coupon.service.SeckillSkuRelationService;
+import org.apache.skywalking.apm.toolkit.trace.Tag;
+import org.apache.skywalking.apm.toolkit.trace.Tags;
+import org.apache.skywalking.apm.toolkit.trace.Trace;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -38,6 +41,16 @@ public class SeckillSessionServiceImpl extends ServiceImpl<SeckillSessionDao, Se
         return new PageUtils(page);
     }
 
+    /**
+     * @Trace 当前方法会被skywalking链路追踪
+     * @Tag 显示指定返回结果和参数
+     * @return
+     */
+    @Trace
+    @Tags({
+            @Tag(key="getLates3DaysSession",value = "returnedObj")
+            //,@Tag(key="param",value = "arg[0]")
+    })
     @Override
     public List<SeckillSessionEntity> getLates3DaysSession() {
         // 计算未来3天的时间
