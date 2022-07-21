@@ -13,7 +13,7 @@
 
 #### 使用说明
 
-1. 相关技术：SpringBoot，SpringCloud Alibaba，Nacos，Gateway，OpenFeign，Mysql，Redis，Mybatis-Plus，Vue ElementUI，Thymeleaf，阿里云对象存储OSS，ElasticSearch，Docker，RocketMQ等
+1. 相关技术：SpringBoot，SpringCloud Alibaba，Nacos，Gateway，OpenFeign，Sentinel，SkyWalking，Mysql，Redis，Mybatis-Plus，Vue ElementUI，Thymeleaf，阿里云对象存储OSS，ElasticSearch，Docker，RocketMQ等
 
 2. 服务和模块：mall-auth_server    登录认证    短信&微博认证
 
